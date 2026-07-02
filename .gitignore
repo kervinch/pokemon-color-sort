@@ -1,0 +1,24 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.tmp
+
+# Regenerable build artifacts — pipeline/fetch.py re-downloads sprites,
+# and preview.png is rebuilt by pipeline/render.py. The viewer's own assets
+# (viewer/assets/*) are committed so the site works with no build step.
+/data/sprites/
+/data/preview.png
+
+# Local viewer-test tooling (not part of the project)
+node_modules/
+package-lock.json
+
+# Local PNG exports from the viewer's "Export PNG" button (the compressed
+# social-preview.jpg derived from one of these IS committed)
+/output/
+
+# Claude Code local runtime state
+.claude/

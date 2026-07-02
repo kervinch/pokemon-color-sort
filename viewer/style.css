@@ -1,0 +1,175 @@
+:root {
+  --bg: #0b0d10;
+  --panel: rgba(16, 19, 24, 0.82);
+  --border: rgba(255, 255, 255, 0.09);
+  --text: #e8eaee;
+  --text-dim: #9aa3b0;
+  --accent: #7aa2ff;
+  font-size: 14px;
+}
+[data-theme="light"] {
+  --bg: #f2f3f5;
+  --panel: rgba(255, 255, 255, 0.88);
+  --border: rgba(0, 0, 0, 0.10);
+  --text: #1a1d22;
+  --text-dim: #5c6570;
+}
+
+* { box-sizing: border-box; margin: 0; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+#view { position: fixed; inset: 0; width: 100%; height: 100%; cursor: grab; touch-action: none; }
+#view.dragging { cursor: grabbing; }
+
+#bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+  display: flex; align-items: center; gap: 16px;
+  padding: 10px 16px;
+  background: var(--panel);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+}
+#title h1 { font-size: 15px; font-weight: 650; letter-spacing: 0.2px; }
+#subtitle { font-size: 11.5px; color: var(--text-dim); white-space: nowrap; }
+#title { display: flex; flex-direction: column; min-width: 0; }
+
+#search {
+  flex: 0 1 320px; margin-left: auto;
+  padding: 6px 12px;
+  font: inherit; font-size: 13px;
+  color: var(--text);
+  background: rgba(128, 128, 128, 0.12);
+  border: 1px solid var(--border); border-radius: 8px;
+  outline: none;
+}
+#search:focus { border-color: var(--accent); }
+
+#controls { display: flex; gap: 6px; align-items: center; position: relative; }
+#controls button, #export-menu button {
+  font: inherit; font-size: 12.5px;
+  color: var(--text);
+  background: rgba(128, 128, 128, 0.12);
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 6px 10px; cursor: pointer; white-space: nowrap;
+}
+#controls button:hover, #export-menu button:hover { background: rgba(128, 128, 128, 0.25); }
+
+#export-wrap { position: relative; }
+#export-menu {
+  position: absolute; right: 0; top: calc(100% + 6px);
+  display: flex; flex-direction: column; gap: 4px;
+  background: var(--panel); backdrop-filter: blur(14px);
+  border: 1px solid var(--border); border-radius: 10px;
+  padding: 8px; min-width: 190px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+}
+#export-menu .dim { color: var(--text-dim); font-size: 11px; }
+#export-menu label { font-size: 12px; color: var(--text-dim); display: flex; gap: 6px; align-items: center; padding: 4px 2px 0; cursor: pointer; }
+#export-menu button:disabled { opacity: 0.4; cursor: default; }
+
+#spectrum {
+  position: fixed; top: 57px; left: 0; right: 0; height: 8px; z-index: 9;
+  cursor: pointer; opacity: 0.95;
+}
+
+[hidden] { display: none !important; }
+#tooltip {
+  position: fixed; z-index: 20; pointer-events: none;
+  display: flex; gap: 10px; align-items: center;
+  background: var(--panel); backdrop-filter: blur(14px);
+  border: 1px solid var(--border); border-radius: 12px;
+  padding: 10px 12px; max-width: 340px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+}
+#tt-sprite { width: 72px; height: 72px; image-rendering: pixelated; flex: none; }
+#tt-name { font-size: 13.5px; font-weight: 650; }
+#tt-tags { display: flex; gap: 5px; margin-top: 3px; flex-wrap: wrap; }
+#tt-tags .tag {
+  font-size: 10.5px; padding: 1.5px 7px; border-radius: 20px;
+  background: rgba(128, 128, 128, 0.16); color: var(--text-dim);
+}
+#tt-tags .tag.shiny { background: rgba(255, 200, 60, 0.16); color: #e8b64d; }
+#tt-meta { font-size: 11.5px; color: var(--text-dim); margin-top: 5px; display: flex; align-items: center; gap: 6px; }
+#tt-meta .swatch { width: 10px; height: 10px; border-radius: 3px; display: inline-block; border: 1px solid var(--border); }
+
+/* Single-line footer: credit/copyright on the left, the (fading) hint beside
+   it with a wide gap, and the HUD pushed to the far right. white-space:nowrap
+   keeps it all on one line; pointer-events pass through to the canvas except
+   over the links and HUD. */
+#footer {
+  position: fixed; left: 0; right: 0; bottom: 12px; z-index: 10;
+  display: flex; align-items: baseline;
+  padding: 0 14px;
+  font-size: 11.5px; color: var(--text-dim);
+  white-space: nowrap; pointer-events: none;
+}
+#credit { pointer-events: auto; }
+#credit a, #social { color: var(--text-dim); text-decoration: none; }
+#credit a:hover, #social:hover { color: var(--accent); }
+/* Hint and the X handle share one slot: the hint shows first, then fades out
+   (app.js, at 7s) while #social fades in over the exact same spot. */
+#tip { position: relative; margin-left: 56px; }
+#hint { transition: opacity 1s; }
+#social {
+  position: absolute; left: 0; top: 0;
+  opacity: 0; transition: opacity 1s; pointer-events: auto;
+}
+#hud {
+  margin-left: auto; padding-left: 24px;
+  display: flex; gap: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+#loader {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+  background: var(--bg);
+  transition: opacity 0.5s;
+}
+#loader-title { font-size: 22px; font-weight: 700; letter-spacing: 0.3px; }
+#loader-bar { width: 260px; height: 4px; border-radius: 4px; background: rgba(128, 128, 128, 0.2); overflow: hidden; }
+#loader-fill {
+  height: 100%; width: 0%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #1a1a1a, #f2f2f2, #eba3c4, #e5484d, #f0a030, #ecd240, #58b556, #4f9fdd, #8d6fd6);
+  transition: width 0.25s;
+}
+#loader-msg { font-size: 12px; color: var(--text-dim); }
+#loader.error #loader-msg { color: #e5484d; max-width: 420px; text-align: center; line-height: 1.5; }
+
+@media (max-width: 900px) {
+  #subtitle, #hint { display: none; }
+  #search { flex-basis: 160px; }
+}
+
+/* Phones: the toolbar can't hold title + search + 5 buttons on one row, so
+   stack it — row 1 is the title + search (search grows), row 2 is the buttons —
+   and let the footer wrap instead of clipping off-screen. */
+@media (max-width: 680px) {
+  #bar { flex-wrap: wrap; gap: 8px; padding: 8px 12px; }
+  #title { flex: 0 0 auto; order: 1; }
+  #title h1 { font-size: 14px; white-space: nowrap; }
+  #search { order: 2; flex: 1 1 120px; min-width: 0; margin-left: 0; font-size: 16px; } /* 16px avoids iOS focus-zoom */
+  #controls { order: 3; flex: 1 1 100%; gap: 6px; }
+
+  #spectrum { top: 92px; }               /* clears the taller two-row header */
+  #tooltip { max-width: calc(100vw - 20px); }   /* tap tooltip fits narrow screens */
+
+  /* footer as a plain block so the copyright wraps at the viewport width;
+     handle + HUD flow on the line below it */
+  #footer {
+    display: block; white-space: normal;
+    bottom: 8px; padding: 0 12px;
+    font-size: 10px; line-height: 1.5;
+  }
+  #credit { display: block; margin-bottom: 3px; }
+  #tip { display: inline; position: static; margin: 0; }
+  #social { position: static; opacity: 1; }   /* no hint on touch, so show the handle right away */
+  #hud { display: inline-flex; gap: 12px; margin-left: 12px; padding: 0; vertical-align: baseline; }
+}

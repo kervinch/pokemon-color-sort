@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pokémon Spectrum</title>
+<meta name="description" content="Every Pokémon — every form, mega, regional variant, and shiny — packed into one continuous, color-sorted mosaic.">
+<!-- Social link preview (Open Graph + Twitter/X card) -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kervinch.github.io/pokemon-color-sort/viewer/">
+<meta property="og:title" content="Pokémon Spectrum">
+<meta property="og:description" content="Every Pokémon — every form, mega, regional variant, and shiny — packed into one continuous, color-sorted mosaic.">
+<meta property="og:image" content="https://kervinch.github.io/pokemon-color-sort/social-preview.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Every Pokémon sprite arranged into a color spectrum — grayscale, then pinks, reds, oranges, yellows, greens, blues, and purples.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Pokémon Spectrum">
+<meta name="twitter:description" content="Every Pokémon — every form, mega, regional variant, and shiny — packed into one continuous, color-sorted mosaic.">
+<meta name="twitter:image" content="https://kervinch.github.io/pokemon-color-sort/social-preview.jpg">
+<meta name="twitter:creator" content="@kervinch">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="dark">
+  <canvas id="view"></canvas>
+
+  <header id="bar">
+    <div id="title">
+      <h1>Pokémon Spectrum</h1>
+      <span id="subtitle">every Pokémon · every form · every shiny — sorted by color</span>
+    </div>
+    <input id="search" type="search" placeholder="Search — try “charizard” or “shiny”" spellcheck="false" autocomplete="off">
+    <div id="controls">
+      <button id="btn-fit" title="Fit to window (0)">Fit</button>
+      <button id="btn-100" title="Actual size (1)">1:1</button>
+      <button id="btn-replay" title="Replay assembly">Replay</button>
+      <button id="btn-theme" title="Toggle background">◐</button>
+      <div id="export-wrap">
+        <button id="btn-export">Export PNG ▾</button>
+        <div id="export-menu" hidden>
+          <button data-scale="1">1× <span class="dim" id="dim1"></span></button>
+          <button data-scale="2">2× <span class="dim" id="dim2"></span></button>
+          <button data-scale="3">3× <span class="dim" id="dim3"></span></button>
+          <label><input type="checkbox" id="export-alpha"> transparent background</label>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div id="spectrum" title="Jump to a color"></div>
+
+  <div id="tooltip" hidden>
+    <canvas id="tt-sprite" width="96" height="96"></canvas>
+    <div id="tt-text">
+      <div id="tt-name"></div>
+      <div id="tt-tags"></div>
+      <div id="tt-meta"></div>
+    </div>
+  </div>
+
+  <div id="footer">
+    <div id="credit">sprites · <a href="https://github.com/PokeAPI/sprites" target="_blank" rel="noopener">PokeAPI</a> · Pokémon © Nintendo · Creatures · GAME FREAK — unofficial non-commercial fan project, not affiliated with or endorsed by them</div>
+    <div id="tip">
+      <span id="hint">scroll to zoom · drag to pan · hover to identify</span>
+      <a id="social" href="https://x.com/kervinch" target="_blank" rel="noopener">X&nbsp;@kervinch</a>
+    </div>
+    <div id="hud"><span id="hud-zoom"></span><span id="hud-count"></span></div>
+  </div>
+
+  <div id="loader">
+    <div id="loader-title">Pokémon Spectrum</div>
+    <div id="loader-bar"><div id="loader-fill"></div></div>
+    <div id="loader-msg">loading sprites…</div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
